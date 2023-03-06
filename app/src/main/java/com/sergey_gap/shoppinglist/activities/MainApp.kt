@@ -6,3 +6,4 @@ import com.sergey_gap.shoppinglist.dataBase.MainDataBase
 class MainApp : Application() {
     val database by lazy { MainDataBase.getDataBaseInstance(this) }// by lazy запускается единожды
 }
+// class DAO - Data Access Object

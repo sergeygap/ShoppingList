@@ -11,7 +11,7 @@ import com.sergey_gap.shoppinglist.entities.ShoppingListItem
 // будет давать instance нашей бд
 @Database (entities = [LibraryItem::class, NoteItem::class, ShoppingListItem::class, ShoppingListItem::class], version = 1)
 abstract class MainDataBase: RoomDatabase() {
-
+    abstract fun getDao(): Dao
     companion object { // используется так: функции написанные в теле, для них не нужно создавать экземпляр класса
         @Volatile
         private var INSTANCE: MainDataBase? = null
