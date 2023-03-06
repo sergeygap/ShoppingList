@@ -20,4 +20,5 @@ data class ShoppingListNames(
     val checkedItemsCounter: Int,
     @ColumnInfo(name = "ItemsIds") // id каждого элемента списка
     val ItemsIds: Int
+
 ): Serializable
