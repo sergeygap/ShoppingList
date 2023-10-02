@@ -1,11 +1,13 @@
 package com.gap.shoppinglist.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.gap.shoppinglist.domain.DomainRepository
 import com.gap.shoppinglist.domain.ShopItem
 import java.lang.RuntimeException
 
 object RepositoryImpl : DomainRepository {
-
+    private val shopListLD = MutableLiveData<List<ShopItem>>()
     private val shopList = mutableListOf<ShopItem>()
     private var autoIncrementId = 0
 
@@ -21,10 +23,12 @@ object RepositoryImpl : DomainRepository {
             shopItem.id = autoIncrementId++
         }
         shopList.add(shopItem)
+        updateList()
     }
 
     override fun deleteShopItem(shopItem: ShopItem) {
         shopList.remove(shopItem)
+        updateList()
     }
 
     override fun editShopItem(shopItem: ShopItem) {
@@ -40,7 +44,10 @@ object RepositoryImpl : DomainRepository {
         } ?: throw RuntimeException("ShopItem does not found $shopItemId")
     }
 
-    override fun getListShopItem(): List<ShopItem> {
-        return shopList.toList()
+    override fun getListShopItem(): LiveData<List<ShopItem>> {
+        return shopListLD
+    }
+    private fun updateList() {
+        shopListLD.value = shopList
     }
 }

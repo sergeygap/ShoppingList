@@ -9,13 +9,18 @@ import com.gap.shoppinglist.R
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
+    var count = 3
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProvider(this)[(MainViewModel::class.java)]
-        viewModel.getShopList()
         viewModel.shopListLiveData.observe(this) {
             Log.d("OnCreateLDTest", "onCreate: $it")
+            if (count == 3) {
+                count++
+                viewModel.editShopItem(2)
+            }
+
         }
 
         viewModel.deleteShopItem(1)
