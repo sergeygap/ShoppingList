@@ -1,7 +1,7 @@
 package com.gap.shoppinglist.domain
 
-class GetShopItemUseCase() {
+class GetShopItemUseCase(private val repository: DomainRepository) {
     fun getShopItem(shopItemId: Int): ShopItem {
-        TODO()
+       return repository.getShopItem(shopItemId)
     }
 }

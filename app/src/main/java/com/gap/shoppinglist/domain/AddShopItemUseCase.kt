@@ -1,7 +1,8 @@
 package com.gap.shoppinglist.domain
 
-class AddShopItemUseCase {
+class AddShopItemUseCase(private val repository: DomainRepository) {
+
     fun addShopItem(shopItem: ShopItem){
-        TODO()
+        repository.addShopItem(shopItem)
     }
 }
