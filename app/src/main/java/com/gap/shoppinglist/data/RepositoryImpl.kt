@@ -9,6 +9,13 @@ object RepositoryImpl : DomainRepository {
     private val shopList = mutableListOf<ShopItem>()
     private var autoIncrementId = 0
 
+    init {
+        for (i in 0 until 10) {
+            addShopItem(ShopItem("$i", i, false))
+        }
+    }
+
+
     override fun addShopItem(shopItem: ShopItem) {
         if (shopItem.id == -1){
             shopItem.id = autoIncrementId++
@@ -22,7 +29,8 @@ object RepositoryImpl : DomainRepository {
 
     override fun editShopItem(shopItem: ShopItem) {
         deleteShopItem(shopItem)
-        addShopItem(shopItem)
+        val newElement = shopItem.copy(enabled = !shopItem.enabled)
+        addShopItem(newElement)
         // возможно error
     }
 
