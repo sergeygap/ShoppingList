@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gap.shoppinglist.R
 import com.gap.shoppinglist.domain.ShopItem
@@ -15,12 +16,13 @@ class Adapter : RecyclerView.Adapter<Adapter.ViewHolder>() {
     var setOnClickListener: ((ShopItem) -> Unit)? = null
     var shopItemList = listOf<ShopItem>()
         set(value) {
+            val diffUtil = ShopListDiffNewOld(value, shopItemList)
+            val diffCalculate = DiffUtil.calculateDiff(diffUtil)
+            diffCalculate.dispatchUpdatesTo(this)
             field = value
-            notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d("AdapterTestViewHolder", "onCreateViewHolder: ${count++}")
         val view: View = when (viewType) {
             TYPE_ENABLED -> {
                 LayoutInflater.from(parent.context)
@@ -45,6 +47,7 @@ class Adapter : RecyclerView.Adapter<Adapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        Log.d("AdapterTestViewHolder", "onBindViewHolder: ${count++}")
         val shopItem = shopItemList[position]
         viewHolder.tvName.text = shopItem.name
         viewHolder.tvCount.text = shopItem.count.toString()
