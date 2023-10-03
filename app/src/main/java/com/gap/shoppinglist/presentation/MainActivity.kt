@@ -10,21 +10,29 @@ import com.gap.shoppinglist.R
 import com.gap.shoppinglist.presentation.Adapter.Companion.MAX_POOL_SIZE
 import com.gap.shoppinglist.presentation.Adapter.Companion.TYPE_DISABLED
 import com.gap.shoppinglist.presentation.Adapter.Companion.TYPE_ENABLED
+import com.gap.shoppinglist.presentation.viewModel.MainViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: Adapter
+    private lateinit var fab: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setUpView()
         setUpRecyclerView()
         viewModel = ViewModelProvider(this)[(MainViewModel::class.java)]
         viewModel.shopListLiveData.observe(this) {
             adapter.submitList(it)
         }
 
+    }
+
+    private fun setUpView() {
+        fab = findViewById(R.id.FAB)
     }
 
     private fun setUpRecyclerView() {
@@ -64,12 +72,18 @@ class MainActivity : AppCompatActivity() {
     private fun setOnClickListener() {
         adapter.setOnClickListener = {
             Log.d("SetOnClickListener", it.toString())
+            val intent = ShopItemActivity.intentFactoryModeEdit(this, it.id)
+            startActivity(intent)
+        }
+        fab.setOnClickListener {
+            val intent = ShopItemActivity.intentFactoryModeAdd(this)
+            startActivity(intent)
         }
     }
 
     private fun setOnLongClickListener() {
         adapter.setOnLongClickListener = {
-            viewModel.editShopItem(it.id)
+            viewModel.changeEnableState(it)
         }
     }
 

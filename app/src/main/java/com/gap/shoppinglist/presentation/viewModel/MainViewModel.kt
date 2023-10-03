@@ -1,6 +1,5 @@
-package com.gap.shoppinglist.presentation
+package com.gap.shoppinglist.presentation.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gap.shoppinglist.data.RepositoryImpl
 import com.gap.shoppinglist.domain.DeleteShopItemUseCase
@@ -26,8 +25,9 @@ class MainViewModel : ViewModel() {
         deleteShopItemUseCase.deleteShopItem(getShopItemIseCase.getShopItem(shopItemId))
     }
 
-    fun editShopItem(shopItemId: Int) {
-        editShopItemUseCase.editShopItem(getShopItemIseCase.getShopItem(shopItemId))
+    fun changeEnableState(shopItem: ShopItem) {
+        val newItem = shopItem.copy(enabled = !shopItem.enabled)
+        editShopItemUseCase.editShopItem(newItem)
     }
 
 }

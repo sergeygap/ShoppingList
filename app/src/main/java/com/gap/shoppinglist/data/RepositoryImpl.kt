@@ -13,7 +13,7 @@ object RepositoryImpl : DomainRepository {
     private var autoIncrementId = 0
 
     init {
-        for (i in 0 until 1000) {
+        for (i in 0 until 10) {
             addShopItem(ShopItem("Name $i", i, Random.nextBoolean()))
         }
     }
@@ -33,9 +33,9 @@ object RepositoryImpl : DomainRepository {
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        deleteShopItem(shopItem)
-        val newElement = shopItem.copy(enabled = !shopItem.enabled)
-        addShopItem(newElement)
+        val oldElement = getShopItem(shopItem.id)
+        shopList.remove(oldElement)
+        addShopItem(shopItem)
         // возможно error
     }
 

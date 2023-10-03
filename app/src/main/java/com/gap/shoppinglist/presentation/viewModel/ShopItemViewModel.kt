@@ -1,0 +1,91 @@
+package com.gap.shoppinglist.presentation.viewModel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.gap.shoppinglist.data.RepositoryImpl
+import com.gap.shoppinglist.domain.AddShopItemUseCase
+import com.gap.shoppinglist.domain.EditShopItemUseCase
+import com.gap.shoppinglist.domain.GetShopItemUseCase
+import com.gap.shoppinglist.domain.ShopItem
+
+class ShopItemViewModel : ViewModel() {
+
+    private val repository = RepositoryImpl
+    private val getShopItemUseCase = GetShopItemUseCase(repository)
+    private val addShopItemUseCase = AddShopItemUseCase(repository)
+    private val editShopItemUseCase = EditShopItemUseCase(repository)
+
+    private val _errorInputName = MutableLiveData<Boolean>()
+    val errorInputName: LiveData<Boolean>
+        get() = _errorInputName
+
+    private val _errorInputCount = MutableLiveData<Boolean>()
+    val errorInputCount: LiveData<Boolean>
+        get() = _errorInputCount
+
+    private val _getShopItemLD = MutableLiveData<ShopItem>()
+    val getShopItemLD: LiveData<ShopItem>
+        get() = _getShopItemLD
+
+    private val _exitActivity = MutableLiveData<Unit>()
+    val exitActivity: LiveData<Unit>
+        get() = _exitActivity
+
+    fun getShopItem(shopItemId: Int) {
+        val shopItem = getShopItemUseCase.getShopItem(shopItemId)
+        _getShopItemLD.value = shopItem
+    }
+
+    fun addShopItem(inputName: String?, inputCount: String?) {
+        val name = trimName(inputName)
+        val count = trimCount(inputCount)
+        val fieldValid = fieldsValid(name, count)
+        if (fieldValid) {
+            val shopItem = ShopItem(name, count, true)
+            addShopItemUseCase.addShopItem(shopItem)
+            finishWork()
+        }
+    }
+
+    fun editShopItem(inputName: String?, inputCount: String?) {
+        val name = trimName(inputName)
+        val count = trimCount(inputCount)
+        val fieldValid = fieldsValid(name, count)
+        if (fieldValid) {
+            _getShopItemLD.value?.let {
+                val shopItem = it.copy(name = name, count = count)
+                editShopItemUseCase.editShopItem(shopItem)
+                finishWork()
+            }
+        }
+    }
+
+    private fun fieldsValid(name: String, count: Int): Boolean {
+        var result = true
+        if (name.isBlank()) {
+            _errorInputName.value = true
+            result = false
+        }
+        if (count <= 0) {
+            _errorInputCount.value = true
+            result = false
+        }
+        return result
+    }
+
+    fun resetErrorInputName() {
+        _errorInputName.value = false
+    }
+
+    fun resetErrorInputCount() {
+        _errorInputCount.value = false
+    }
+
+    private fun trimCount(inputCount: String?): Int = inputCount?.trim()?.toIntOrNull() ?: 0
+    private fun trimName(inputName: String?): String = inputName?.trim() ?: ""
+
+    private fun finishWork() {
+        _exitActivity.value = Unit
+    }
+}
