@@ -1,49 +1,36 @@
 package com.gap.shoppinglist.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.gap.shoppinglist.R
-import com.gap.shoppinglist.domain.ShopItem
+import com.gap.shoppinglist.presentation.Adapter.Companion.MAX_POOL_SIZE
+import com.gap.shoppinglist.presentation.Adapter.Companion.TYPE_DISABLED
+import com.gap.shoppinglist.presentation.Adapter.Companion.TYPE_ENABLED
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var llScroll: LinearLayout
+    private lateinit var adapter: Adapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        llScroll = findViewById(R.id.ll_Scroll)
+        setUpRecyclerView()
         viewModel = ViewModelProvider(this)[(MainViewModel::class.java)]
         viewModel.shopListLiveData.observe(this) {
-            updateList(it)
+            adapter.shopItemList = it
         }
 
     }
 
-    private fun updateList(it: List<ShopItem>) {
-        llScroll.removeAllViews()
-        for (shopItem in it) {
-            val layoutId = if (shopItem.enabled) {
-                R.layout.item_shop_enabled
-            } else {
-                R.layout.item_shop_disabled
-            }
-            val view = LayoutInflater.from(this).inflate(layoutId, llScroll, false)
-            val tvName = view.findViewById<TextView>(R.id.name)
-            val tvCount = view.findViewById<TextView>(R.id.count)
-            tvName.text = shopItem.name
-            tvCount.text = shopItem.count.toString()
-            view.setOnLongClickListener {
-                viewModel.editShopItem(shopItem.id)
-                true
-            }
-            llScroll.addView(view)
-        }
-
+    private fun setUpRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.mainRecyclerView)
+        this.adapter = Adapter()
+        recyclerView.adapter = adapter
+        recyclerView.recycledViewPool.setMaxRecycledViews(TYPE_ENABLED, MAX_POOL_SIZE)
+        recyclerView.recycledViewPool.setMaxRecycledViews(TYPE_DISABLED, MAX_POOL_SIZE)
     }
+
 }

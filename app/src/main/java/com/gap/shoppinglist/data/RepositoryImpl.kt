@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.gap.shoppinglist.domain.DomainRepository
 import com.gap.shoppinglist.domain.ShopItem
 import java.lang.RuntimeException
+import kotlin.random.Random
 
 object RepositoryImpl : DomainRepository {
     private val shopListLD = MutableLiveData<List<ShopItem>>()
@@ -13,7 +14,7 @@ object RepositoryImpl : DomainRepository {
 
     init {
         for (i in 0 until 1000) {
-            addShopItem(ShopItem("Name $i", i, false))
+            addShopItem(ShopItem("Name $i", i, Random.nextBoolean()))
         }
     }
 
