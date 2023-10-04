@@ -15,11 +15,7 @@ import com.gap.shoppinglist.domain.ShopItem
 import com.gap.shoppinglist.presentation.viewModel.ShopItemViewModel
 import com.google.android.material.textfield.TextInputLayout
 
-class ShopItemFragment(
-    private val screenMode: String = UNKNOWN_MODE,
-    private val shopItemId: Int = ShopItem.UNDEFINED_ID
-
-) : Fragment() {
+class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
     private lateinit var tilName: TextInputLayout
@@ -28,6 +24,13 @@ class ShopItemFragment(
     private lateinit var etCount: EditText
     private lateinit var save: Button
 
+    private var screenMode: String = UNKNOWN_MODE
+    private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseArguments()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +42,7 @@ class ShopItemFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parseIntent()
+
         setUpViewModel()
         setUpView(view)
         when (screenMode) {
@@ -119,10 +122,22 @@ class ShopItemFragment(
         })
     }
 
-    private fun parseIntent() {
+    private fun parseArguments() {
 
-        if (screenMode != ADD_MODE && screenMode != EDIT_MODE) {
-            throw RuntimeException("Mode is Unknown")
+        val args = requireArguments()
+        if (!args.containsKey(MODE)) {
+            throw RuntimeException("Where is mode?")
+        }
+        val mode = args.getString(MODE)
+        if (mode != ADD_MODE && mode != EDIT_MODE) {
+            throw RuntimeException("Mode Unknown")
+        }
+        screenMode = mode
+        if (screenMode == EDIT_MODE) {
+            if (!args.containsKey(SHOP_ITEM_ID)) {
+                throw RuntimeException("Where id shop item id")
+            }
+            shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
         }
         if (screenMode == EDIT_MODE && shopItemId == ShopItem.UNDEFINED_ID) {
             throw RuntimeException("Where is id?")
@@ -143,18 +158,27 @@ class ShopItemFragment(
     }
 
     companion object {
-        private const val EXTRA_MODE = "extra_mode"
+        private const val MODE = "mode"
         private const val EDIT_MODE = "mode_edit"
         private const val ADD_MODE = "mode_add"
         private const val SHOP_ITEM_ID = "shop_item_id"
         private const val UNKNOWN_MODE = ""
 
         fun newInstanceModeAdd(): ShopItemFragment {
-            return ShopItemFragment(ADD_MODE)
+            return ShopItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(MODE, ADD_MODE)
+                }
+            }
         }
 
         fun newInstanceModeEdit(shopItemId: Int): ShopItemFragment {
-            return ShopItemFragment(EDIT_MODE, shopItemId)
+            val args = Bundle()
+            args.putString(MODE, EDIT_MODE)
+            args.putInt(SHOP_ITEM_ID, shopItemId)
+            val fragment = ShopItemFragment()
+            fragment.arguments = args
+            return fragment
         }
     }
 }
