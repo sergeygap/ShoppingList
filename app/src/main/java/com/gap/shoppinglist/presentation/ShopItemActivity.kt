@@ -27,102 +27,102 @@ class ShopItemActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
-        parseIntent()
-        setUpViewModel()
-        setUpView()
-        when (screenMode) {
-            EDIT_MODE -> launchEditMode()
-            ADD_MODE -> launchAddMode()
-            else -> throw RuntimeException(UNKNOWN_MODE)
-        }
+//        parseIntent()
+//        setUpViewModel()
+//        setUpView()
+//        when (screenMode) {
+//            EDIT_MODE -> launchEditMode()
+//            ADD_MODE -> launchAddMode()
+//            else -> throw RuntimeException(UNKNOWN_MODE)
+//        }
     }
-
-    private fun launchAddMode() {
-        save.setOnClickListener {
-            viewModel.addShopItem(etName.text.toString(), etCount.text.toString())
-        }
-        setUpLaunch()
-    }
-
-    private fun setUpLaunch() {
-        setErrors()
-        setUpEditTextListeners()
-        viewModel.exitActivity.observe(this) {
-            finish()
-        }
-    }
-
-    private fun launchEditMode() {
-        viewModel.getShopItem(shopItemId)
-        viewModel.getShopItemLD.observe(this) {
-            etName.setText(it.name)
-            etCount.setText(it.count.toString())
-        }
-        save.setOnClickListener {
-            viewModel.editShopItem(etName.text.toString(), etCount.text.toString())
-        }
-        setUpLaunch()
-    }
-
-    private fun setErrors() {
-        viewModel.errorInputName.observe(this) {
-            if (it) {
-                tilName.error = "Error input data"
-            } else {
-                tilName.error = null
-            }
-        }
-        viewModel.errorInputCount.observe(this) {
-            if (it) {
-                tilCount.error = "Error input data"
-            } else {
-                tilCount.error = null
-            }
-        }
-    }
-
-    private fun setUpEditTextListeners() {
-        etName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.resetErrorInputName()
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-        etCount.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.resetErrorInputCount()
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-    }
-
-    private fun parseIntent() {
-        shopItemId = intent.getIntExtra(SHOP_ITEM_ID, -1)
-        screenMode = intent.getStringExtra(EXTRA_MODE) ?: UNKNOWN_MODE
-        //TODO: may be error because using this code without checking
-    }
-
-    private fun setUpView() {
-        save = findViewById(R.id.save)
-        etName = findViewById(R.id.et_name)
-        etCount = findViewById(R.id.et_count)
-        tilName = findViewById(R.id.til_name)
-        tilCount = findViewById(R.id.til_count)
-    }
-
-    private fun setUpViewModel() {
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
-    }
+//
+//    private fun launchAddMode() {
+//        save.setOnClickListener {
+//            viewModel.addShopItem(etName.text.toString(), etCount.text.toString())
+//        }
+//        setUpLaunch()
+//    }
+//
+//    private fun setUpLaunch() {
+//        setErrors()
+//        setUpEditTextListeners()
+//        viewModel.exitActivity.observe(this) {
+//            finish()
+//        }
+//    }
+//
+//    private fun launchEditMode() {
+//        viewModel.getShopItem(shopItemId)
+//        viewModel.getShopItemLD.observe(this) {
+//            etName.setText(it.name)
+//            etCount.setText(it.count.toString())
+//        }
+//        save.setOnClickListener {
+//            viewModel.editShopItem(etName.text.toString(), etCount.text.toString())
+//        }
+//        setUpLaunch()
+//    }
+//
+//    private fun setErrors() {
+//        viewModel.errorInputName.observe(this) {
+//            if (it) {
+//                tilName.error = "Error input data"
+//            } else {
+//                tilName.error = null
+//            }
+//        }
+//        viewModel.errorInputCount.observe(this) {
+//            if (it) {
+//                tilCount.error = "Error input data"
+//            } else {
+//                tilCount.error = null
+//            }
+//        }
+//    }
+//
+//    private fun setUpEditTextListeners() {
+//        etName.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//            }
+//
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                viewModel.resetErrorInputName()
+//            }
+//
+//            override fun afterTextChanged(p0: Editable?) {
+//            }
+//        })
+//        etCount.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//            }
+//
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                viewModel.resetErrorInputCount()
+//            }
+//
+//            override fun afterTextChanged(p0: Editable?) {
+//            }
+//        })
+//    }
+//
+//    private fun parseIntent() {
+//        shopItemId = intent.getIntExtra(SHOP_ITEM_ID, -1)
+//        screenMode = intent.getStringExtra(EXTRA_MODE) ?: UNKNOWN_MODE
+//        //TODO: may be error because using this code without checking
+//    }
+//
+//    private fun setUpView() {
+//        save = findViewById(R.id.save)
+//        etName = findViewById(R.id.et_name)
+//        etCount = findViewById(R.id.et_count)
+//        tilName = findViewById(R.id.til_name)
+//        tilCount = findViewById(R.id.til_count)
+//    }
+//
+//    private fun setUpViewModel() {
+//        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+//    }
 
     companion object {
         private const val EXTRA_MODE = "extra_mode"
