@@ -1,6 +1,7 @@
 package com.gap.shoppinglist.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +15,7 @@ import com.gap.shoppinglist.presentation.fragment.ShopItemFragment
 import com.gap.shoppinglist.presentation.viewModel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: Adapter
@@ -32,6 +33,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.shopListLiveData.observe(this) {
             adapter.submitList(it)
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
     }
 
     private fun workInLandMode() {
@@ -102,6 +108,11 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    fun shopToastOnFinishEditing() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
     }
 
     private fun beginTransaction(shopItemFragment: ShopItemFragment) {

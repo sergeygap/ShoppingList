@@ -1,5 +1,6 @@
 package com.gap.shoppinglist.presentation.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,6 +28,18 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = UNKNOWN_MODE
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else
+            throw RuntimeException("Activity must implement interface")
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +79,12 @@ class ShopItemFragment : Fragment() {
         setErrors()
         setUpEditTextListeners()
         viewModel.exitActivity.observe(viewLifecycleOwner) {
-            requireActivity().onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
+    }
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 
     private fun launchEditMode() {
