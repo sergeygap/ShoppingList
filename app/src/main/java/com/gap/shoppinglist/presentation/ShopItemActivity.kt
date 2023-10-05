@@ -3,7 +3,6 @@ package com.gap.shoppinglist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.gap.shoppinglist.R
 import com.gap.shoppinglist.domain.ShopItem
@@ -17,20 +16,25 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
+        if (savedInstanceState == null) {
+            launchRightMode()
+        }
     }
 
 
     private fun parseIntent() {
         shopItemId = intent.getIntExtra(SHOP_ITEM_ID, -1)
         screenMode = intent.getStringExtra(EXTRA_MODE) ?: UNKNOWN_MODE
-        Log.d("shopItemId", "parseIntent: $shopItemId")
+    }
+
+    private fun launchRightMode() {
         val shopItemFragment = when (screenMode) {
             EDIT_MODE -> ShopItemFragment.newInstanceModeEdit(shopItemId)
             ADD_MODE -> ShopItemFragment.newInstanceModeAdd()
             else -> throw RuntimeException(UNKNOWN_MODE)
         }
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container, shopItemFragment)
+            .replace(R.id.shop_item_container, shopItemFragment)
             .commit()
     }
 

@@ -3,6 +3,7 @@ package com.gap.shoppinglist.presentation.fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ class ShopItemFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseArguments()
+        Log.d("ShopItemFragmentOnCreate", "onCreate")
     }
 
     override fun onCreateView(
@@ -64,7 +66,7 @@ class ShopItemFragment : Fragment() {
         setErrors()
         setUpEditTextListeners()
         viewModel.exitActivity.observe(viewLifecycleOwner) {
-            requireActivity().finish()
+            requireActivity().onBackPressed()
         }
     }
 

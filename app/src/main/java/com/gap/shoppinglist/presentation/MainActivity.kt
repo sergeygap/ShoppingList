@@ -1,8 +1,8 @@
 package com.gap.shoppinglist.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +10,7 @@ import com.gap.shoppinglist.R
 import com.gap.shoppinglist.presentation.Adapter.Companion.MAX_POOL_SIZE
 import com.gap.shoppinglist.presentation.Adapter.Companion.TYPE_DISABLED
 import com.gap.shoppinglist.presentation.Adapter.Companion.TYPE_ENABLED
+import com.gap.shoppinglist.presentation.fragment.ShopItemFragment
 import com.gap.shoppinglist.presentation.viewModel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -18,17 +19,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: Adapter
     private lateinit var fab: FloatingActionButton
+    private var shopItemContainer: FragmentContainerView? = null
+    private var landMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setUpView()
+        workInLandMode()
         setUpRecyclerView()
         viewModel = ViewModelProvider(this)[(MainViewModel::class.java)]
         viewModel.shopListLiveData.observe(this) {
             adapter.submitList(it)
         }
+    }
 
+    private fun workInLandMode() {
+        shopItemContainer = findViewById(R.id.shop_item_container_land)
+        shopItemContainer?.let {
+            landMode = true
+        }
     }
 
     private fun setUpView() {
@@ -71,14 +81,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun setOnClickListener() {
         adapter.setOnClickListener = {
-            Log.d("SetOnClickListener", it.toString())
-            val intent = ShopItemActivity.intentFactoryModeEdit(this, it.id)
-            startActivity(intent)
+
+            if (landMode) {
+                val shopItemFragment = ShopItemFragment.newInstanceModeEdit(it.id)
+                beginTransaction(shopItemFragment)
+            } else {
+                val intent = ShopItemActivity.intentFactoryModeEdit(this, it.id)
+                startActivity(intent)
+            }
+
+
         }
         fab.setOnClickListener {
-            val intent = ShopItemActivity.intentFactoryModeAdd(this)
-            startActivity(intent)
+            if (landMode) {
+                val shopItemFragment = ShopItemFragment.newInstanceModeAdd()
+                beginTransaction(shopItemFragment)
+            } else {
+                val intent = ShopItemActivity.intentFactoryModeAdd(this)
+                startActivity(intent)
+            }
+
         }
+    }
+
+    private fun beginTransaction(shopItemFragment: ShopItemFragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container_land, shopItemFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setOnLongClickListener() {
