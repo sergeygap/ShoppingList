@@ -17,7 +17,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory
+                .getInstance(this.application)
+        )[(MainViewModel::class.java)]
+    }
     private lateinit var adapter: Adapter
     private lateinit var fab: FloatingActionButton
     private var shopItemContainer: FragmentContainerView? = null
@@ -29,7 +35,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         setUpView()
         workInLandMode()
         setUpRecyclerView()
-        viewModel = ViewModelProvider(this)[(MainViewModel::class.java)]
         viewModel.shopListLiveData.observe(this) {
             adapter.submitList(it)
         }

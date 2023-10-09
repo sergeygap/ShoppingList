@@ -19,7 +19,11 @@ import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemFragment : Fragment() {
 
-    private lateinit var viewModel: ShopItemViewModel
+    private val viewModel: ShopItemViewModel by lazy {
+        ViewModelProvider(this,
+            ViewModelProvider.AndroidViewModelFactory
+                .getInstance(requireActivity().application))[ShopItemViewModel::class.java]
+    }
     private lateinit var tilName: TextInputLayout
     private lateinit var tilCount: TextInputLayout
     private lateinit var etName: EditText
@@ -58,7 +62,6 @@ class ShopItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setUpViewModel()
         setUpView(view)
         when (screenMode) {
             EDIT_MODE -> launchEditMode()
@@ -172,9 +175,6 @@ class ShopItemFragment : Fragment() {
         tilCount = view.findViewById(R.id.til_count)
     }
 
-    private fun setUpViewModel() {
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
-    }
 
     companion object {
         private const val MODE = "mode"
